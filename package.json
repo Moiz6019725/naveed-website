@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "@hugeicons/react": "^1.0.5",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",

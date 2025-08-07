@@ -87,7 +87,6 @@ export default function Add() {
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
-    console.log(formData);
   };
 
   const handleSearchLocation = async () => {

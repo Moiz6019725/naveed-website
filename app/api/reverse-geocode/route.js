@@ -4,7 +4,6 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
   try {
     const { lat, lng } = await req.json();
-    console.log(lat, lng);
 
     const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
 
@@ -20,7 +19,6 @@ export async function POST(req) {
     }
 
     const data = await response.json();
-    console.log(data);
     
 
     const locationName = data.display_name || "Unknown location";

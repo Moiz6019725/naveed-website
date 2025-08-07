@@ -83,7 +83,6 @@ export default function ChatWidget({setShowChat}) {
 
     // Emit to server (server will broadcast back)
     socket.emit("sendMessage", msg);
-    console.log(messages);
 
     // Do not update local state here to avoid duplication
     setInput("");

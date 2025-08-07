@@ -9,6 +9,8 @@ import { logout } from "@/lib/logout";
 import { LogOut, User, Eye, PlusCircle, Edit2, Trash2, MessageCircleMore } from "lucide-react"; 
 import Image from "next/image";
 import AdminChat from "./AdminChat";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 
 export default function ClientAdminPanel({ session }) {
   const [activeTab, setActiveTab] = useState("view");
@@ -37,11 +39,16 @@ export default function ClientAdminPanel({ session }) {
     { id: "delete", label: "Delete", icon: <Trash2 size={16} /> },
     { id: "chat", label: "Chat", icon: <MessageCircleMore size={16}/> },
   ];
+  useGSAP(()=>{
+     gsap.from(".leftSideBar",{
+        x:-300,
+     })
+  })
 
   return (
     <div className="h-[calc(100vh-16px)] m-2 w-full bg-gray-100 flex flex-col lg:flex-row">
       {/* Sidebar (Desktop) / Topbar (Mobile) */}
-      <aside className="w-full lg:w-64 bg-gray-50 m-2 shadow-md z-10 sticky top-0 lg:static">
+      <aside className="leftSideBar w-full lg:w-64 bg-gray-50 m-2 shadow-md z-10 sticky top-0 lg:static">
         <div className="p-4 border-b flex items-center justify-between lg:justify-between">
           <Image src="/logo-transparent.png" width={80} height={80} alt="Site Logo" />
           <div className="flex flex-col items-end">

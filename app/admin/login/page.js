@@ -1,9 +1,10 @@
 "use client";
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { ToastContainer, toast, Bounce, Flip } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 
 const page = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,24 +56,31 @@ const page = () => {
 
     e.target.reset();
   };
-  useEffect(() => {
-     let tl=gsap.timeline()
-     tl.from(".loginBox",{
-      y:-200,
-      opacity:0,
-      duration:1
-     })
-     tl.from(".child1",{
-        opacity:0,
-        duration:1
-     },"anim")
-     tl.from(".child2",{
-        x:200,
-        ease:"elastic.inOut",
-        duration:1
-     },"anim")
-  }, [])
-  
+  useGSAP(() => {
+    let tl = gsap.timeline();
+    tl.from(".loginBox", {
+      y: -200,
+      opacity: 0,
+      duration: 1,
+    });
+    tl.from(
+      ".child1",
+      {
+        opacity: 0,
+        duration: 1,
+      },
+      "anim"
+    );
+    tl.from(
+      ".child2",
+      {
+        x: 200,
+        ease: "elastic.inOut",
+        duration: 1,
+      },
+      "anim"
+    );
+  });
 
   return (
     <>
@@ -116,9 +124,9 @@ const page = () => {
               </label>
               <input
                 type={showPassword ? "text" : "password"}
-                onKeyDown={(e)=>{
-                  if(e.key==="Enter"){
-                    handleSubmit()
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSubmit();
                   }
                 }}
                 name="password"
@@ -127,7 +135,7 @@ const page = () => {
                 required
               />
               <button
-              className="absolute right-2 bottom-1.5"
+                className="absolute right-2 bottom-1.5"
                 onClick={(e) => {
                   e.preventDefault();
                   setShowPassword(!showPassword);

@@ -44,7 +44,6 @@ export async function POST(request) {
   try {
     const nodeReq = streamToNodeRequest(request);
     const { fields, files } = await parseForm(nodeReq);
-    console.log(fields);
     
     
     const uploadedFiles = Array.isArray(files.images)
