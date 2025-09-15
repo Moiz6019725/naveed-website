@@ -1,10 +1,16 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+
+gsap.registerPlugin(useGSAP);
 
 export default function View() {
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
+  const containerRef = useRef(null);
 
   useEffect(() => {
     const fetchCars = async () => {
@@ -26,6 +32,25 @@ export default function View() {
     fetchCars();
   }, []);
 
+  // Animate cards when cars change
+  useGSAP(
+    () => {
+      if (cars.length > 0) {
+        const cards = containerRef.current.querySelectorAll(".car-card");
+        gsap.set(cards, { opacity: 0, y: 40 });
+        gsap.to(cards, {
+          opacity: 1,
+          y: 0,
+          duration: 0.4,
+          stagger: 0.2,
+          ease: "power2.out",
+          clearProps: "all",
+        });
+      }
+    },
+    { dependencies: [cars], scope: containerRef }
+  );
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64 text-xl text-gray-500">
@@ -41,20 +66,23 @@ export default function View() {
   }
 
   return (
-    <div className="p-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div
+      ref={containerRef}
+      className="p-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+    >
       {cars.map((car) => (
         <div
           key={car._id}
-          className="bg-white shadow-lg rounded-2xl overflow-hidden border border-gray-200"
+          className="car-card bg-white shadow-lg rounded-2xl overflow-hidden border border-gray-200"
         >
           <div className="h-52 overflow-hidden bg-gray-100">
             {car.imagePaths?.[0] ? (
               <Link href={`/admin/cars/${car._id}`}>
-              <img
-                src={car.imagePaths[0]}
-                alt={car.title}
-                className="w-full h-full cursor-pointer object-cover hover:scale-105 transition-transform duration-300"
-              />
+                <img
+                  src={car.imagePaths[0]}
+                  alt={car.title}
+                  className="w-full h-full cursor-pointer object-cover hover:scale-105 transition-transform duration-300"
+                />
               </Link>
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -63,7 +91,9 @@ export default function View() {
             )}
           </div>
           <div className="p-4">
-            <h2 className="text-xl font-semibold text-gray-800"><Link href={`/admin/cars/${car._id}`}>{car.title}</Link></h2>
+            <h2 className="text-xl font-semibold text-gray-800">
+              <Link href={`/admin/cars/${car._id}`}>{car.title}</Link>
+            </h2>
             <p className="text-sm text-gray-500">
               {car.brand} • {car.model} • {car.year}
             </p>

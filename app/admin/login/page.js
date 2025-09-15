@@ -167,7 +167,7 @@ const page = () => {
             <button
               disabled={isSubmitting}
               type="submit"
-              className="bg-black text-white rounded-lg px-4 py-2 w-full block cursor-pointer"
+              className="bg-gradient-to-r from-black via-[#262626] to-[#686868] text-white rounded-lg px-4 py-2 w-full block cursor-pointer"
             >
               Login
             </button>

@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import ChatWidget from "./ChatWidget";
-import { MessageCircle } from "lucide-react";
 import Script from "next/script";
+import { useSession } from "next-auth/react"; // Import useSession
 
 export default function CarListWithFilters() {
+  const { data: session } = useSession(); // Get session data
+
   const [cars, setCars] = useState([]);
   const [filteredCars, setFilteredCars] = useState([]);
   const [socket, setSocket] = useState(null);
@@ -21,17 +23,16 @@ export default function CarListWithFilters() {
   });
 
   const handleConnect = () => {
-  if (socket) {
-    // Socket already connected, just show the chat
-    setShowChat(true);
-  } else if (window.io) {
-    const newSocket = window.io("http://localhost:9000");
-    setSocket(newSocket);
-    console.log("Socket connection established");
-    setShowChat(true);
-  }
-};
-
+    if (socket) {
+      // Toggle chat visibility if socket already connected
+      setShowChat((prev) => !prev);
+    } else if (window.io) {
+      const newSocket = window.io("http://localhost:9000");
+      setSocket(newSocket);
+      console.log("Socket connection established");
+      setShowChat(true);
+    }
+  };
 
   useEffect(() => {
     const fetchCars = async () => {
@@ -49,6 +50,17 @@ export default function CarListWithFilters() {
 
     fetchCars();
   }, []);
+
+  // Cleanup socket on unmount
+  useEffect(() => {
+    return () => {
+      if (socket) {
+        socket.disconnect();
+        setSocket(null);
+        console.log("Socket disconnected");
+      }
+    };
+  }, [socket]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -262,13 +274,23 @@ export default function CarListWithFilters() {
           </p>
         )}
       </div>
-      <button
-        onClick={handleConnect}
-        className="p-4 fixed bottom-7 right-7 rounded-full cursor-pointer bg-black text-white"
-      >
-        <MessageCircle size={25} />
-      </button>
-      {showChat && socket && <ChatWidget setShowChat={setShowChat} socket={socket} />}
+
+      {/* Show chat button and widget only if session exists */}
+      {session && (
+        <>
+          <button
+            onClick={handleConnect}
+            className="p-4 fixed bottom-7 right-7 rounded-full cursor-pointer bg-black text-white"
+            aria-label={showChat ? "Close chat" : "Open chat"}
+          >
+            <MessageCircle size={25} />
+          </button>
+
+          {showChat && socket && (
+            <ChatWidget setShowChat={setShowChat} socket={socket} />
+          )}
+        </>
+      )}
 
       <Script
         src="http://localhost:9000/socket.io/socket.io.js"
